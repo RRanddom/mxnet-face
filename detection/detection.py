@@ -77,16 +77,16 @@ def main():
     cv2.imwrite("result.jpg", color)
 
 def detect(picName='test.jpg'):
-    color  = cv2.imread(args.img)
+    color  = cv2.imread(picName)
     img  = cv2.cvtColor(color, cv2.COLOR_BGR2RGB)
-    img, scale = resize(img.copy(), args.scale, args.max_scale)
+    img, scale = resize(img.copy(), 600, 1000)
     im_info = np.array([[img.shape[0], img.shape[1], scale]], dtype=np.float32)  # (h, w, scale)
     img = np.swapaxes(img, 0, 2)
     img = np.swapaxes(img, 1, 2)  # change to (c, h, w) order
     img = img[np.newaxis, :]  # extend to (n, c, h, w)
 
-    ctx = mx.gpu(args.gpu)
-    _, arg_params, aux_params = mx.model.load_checkpoint(args.prefix, args.epoch)
+    ctx = mx.gpu('0')
+    _, arg_params, aux_params = mx.model.load_checkpoint('mxnet-face-fr50', '0')
     arg_params, aux_params = ch_dev(arg_params, aux_params, ctx)
     sym = resnet_50(num_class=2)
     arg_params["data"] = mx.nd.array(img, ctx)
@@ -103,11 +103,11 @@ def detect(picName='test.jpg'):
     pred_boxes = clip_boxes(pred_boxes, (im_info[0][0], im_info[0][1]))
     cls_boxes = pred_boxes[:, 4:8]
     cls_scores = scores[:, 1]
-    keep = np.where(cls_scores >= args.thresh)[0]
+    keep = np.where(cls_scores >= 0.8)[0]
     cls_boxes = cls_boxes[keep, :]
     cls_scores = cls_scores[keep]
     dets = np.hstack((cls_boxes, cls_scores[:, np.newaxis])).astype(np.float32)
-    keep = nms(dets.astype(np.float32), args.nms_thresh)
+    keep = nms(dets.astype(np.float32), '0.3')
     dets = dets[keep, :]
     toc = time.time()
 

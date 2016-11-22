@@ -2,6 +2,7 @@
 # here do not use the the aligned celeba, because we do not know how they align, we need better konw all things in our algorithm
 raw_data_path=/home/work/data/Face/CelebA/Img/img_celeba
 crop_data_path=/home/work/data/Face/CelebA/Img/img_celeba_cropped
+align_data_path=/home/ubuntu/models/img_align_celeba/crop_data_path
 num_process=22
 landmarks=innerEyesAndBottomLip
 face_size=144

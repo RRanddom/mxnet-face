@@ -3,5 +3,4 @@
 *.json
 *.pyc
 *.dat
-detection/symbol/*.pyc
 *.DS_Store

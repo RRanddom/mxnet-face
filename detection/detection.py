@@ -74,7 +74,7 @@ def main():
         bbox = dets[i, :4]
         cv2.rectangle(color, (int(round(bbox[0]/scale)), int(round(bbox[1]/scale))),
                       (int(round(bbox[2]/scale)), int(round(bbox[3]/scale))),  (0, 255, 0), 2)
-    cv2.imwrite("result.jpg", color)
+    cv2.imwrite("result/"+args.img, color)
 
 def detect(picName='test.jpg'):
     color  = cv2.imread(picName)

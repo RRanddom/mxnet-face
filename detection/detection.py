@@ -36,6 +36,7 @@ def resize(im, target_size, max_size):
 
 def main():
     color  = cv2.imread(args.img)
+    print args.img
     img  = cv2.cvtColor(color, cv2.COLOR_BGR2RGB)
     img, scale = resize(img.copy(), args.scale, args.max_scale)
     im_info = np.array([[img.shape[0], img.shape[1], scale]], dtype=np.float32)  # (h, w, scale)
@@ -76,7 +77,7 @@ def main():
                       (int(round(bbox[2]/scale)), int(round(bbox[3]/scale))),  (0, 255, 0), 2)
     cv2.imwrite("result/"+args.img, color)
 
-def detect(picName='test.jpg'):
+def detect(picName):
     color  = cv2.imread(picName)
     img  = cv2.cvtColor(color, cv2.COLOR_BGR2RGB)
     img, scale = resize(img.copy(), 600, 1000)
@@ -85,8 +86,8 @@ def detect(picName='test.jpg'):
     img = np.swapaxes(img, 1, 2)  # change to (c, h, w) order
     img = img[np.newaxis, :]  # extend to (n, c, h, w)
 
-    ctx = mx.gpu('0')
-    _, arg_params, aux_params = mx.model.load_checkpoint('mxnet-face-fr50', '0')
+    ctx = mx.gpu(0)
+    _, arg_params, aux_params = mx.model.load_checkpoint('mxnet-face-fr50', 0)
     arg_params, aux_params = ch_dev(arg_params, aux_params, ctx)
     sym = resnet_50(num_class=2)
     arg_params["data"] = mx.nd.array(img, ctx)
@@ -107,7 +108,7 @@ def detect(picName='test.jpg'):
     cls_boxes = cls_boxes[keep, :]
     cls_scores = cls_scores[keep]
     dets = np.hstack((cls_boxes, cls_scores[:, np.newaxis])).astype(np.float32)
-    keep = nms(dets.astype(np.float32), '0.3')
+    keep = nms(dets.astype(np.float32), 0.3)
     dets = dets[keep, :]
     toc = time.time()
 
@@ -116,7 +117,8 @@ def detect(picName='test.jpg'):
         bbox = dets[i, :4]
         cv2.rectangle(color, (int(round(bbox[0]/scale)), int(round(bbox[1]/scale))),
                       (int(round(bbox[2]/scale)), int(round(bbox[3]/scale))),  (0, 255, 0), 2)
-    cv2.imwrite('result/'+picName, color)
+    print picName
+    cv2.imwrite(picName, color)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="use pre-trainned resnet model to classify one image")

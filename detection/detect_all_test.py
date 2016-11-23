@@ -8,6 +8,6 @@ import os
 images = [ff for ff in os.listdir("test") if os.path.isfile(os.path.join("test",ff))]
 
 for image in images:
-    detection.detect('test/'+image)    
+    detection.detect(image)    
 
 print images

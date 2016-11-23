@@ -78,7 +78,7 @@ def main():
     cv2.imwrite("result/"+args.img, color)
 
 def detect(picName):
-    color  = cv2.imread(picName)
+    color  = cv2.imread('test/'+picName)
     img  = cv2.cvtColor(color, cv2.COLOR_BGR2RGB)
     img, scale = resize(img.copy(), 600, 1000)
     im_info = np.array([[img.shape[0], img.shape[1], scale]], dtype=np.float32)  # (h, w, scale)
@@ -117,8 +117,8 @@ def detect(picName):
         bbox = dets[i, :4]
         cv2.rectangle(color, (int(round(bbox[0]/scale)), int(round(bbox[1]/scale))),
                       (int(round(bbox[2]/scale)), int(round(bbox[3]/scale))),  (0, 255, 0), 2)
-    print picName
-    cv2.imwrite(picName, color)
+    # print picName
+    cv2.imwrite('result/'+picName, color)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="use pre-trainned resnet model to classify one image")
